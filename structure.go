@@ -215,6 +215,8 @@ type MediaSegment struct {
 	SCTE            *SCTE     // SCTE-35 used for Ad signaling in HLS
 	ProgramDateTime time.Time // EXT-X-PROGRAM-DATE-TIME tag associates the first sample of a media segment with an absolute date and/or time
 	Logo            string
+	ID              string
+	Group           string
 	Custom          map[string]CustomTag
 }
 
@@ -333,5 +335,7 @@ type decodingState struct {
 	xmap               *Map
 	scte               *SCTE
 	logo               string
+	ID                 string
+	group              string
 	custom             map[string]CustomTag
 }

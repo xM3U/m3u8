@@ -24,7 +24,11 @@ import (
 
 var reKeyValue = regexp.MustCompile(`([a-zA-Z0-9_-]+)=("[^"]+"|[^",]+)`)
 
-var reLogoValue = regexp.MustCompile(`tvg-logo="(.+?)"`)
+var (
+	reLogoValue  = regexp.MustCompile(`tvg-logo="(.+?)"`)
+	reIDValue    = regexp.MustCompile(`tvg-id="(.+?)"`)
+	reGroupValue = regexp.MustCompile(`group-title="(.+?)"`)
+)
 
 // TimeParse allows globally apply and/or override Time Parser function.
 // Available variants:
@@ -501,9 +505,17 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 			state.logo = match[1]
 		}
 
+		if match := reIDValue.FindStringSubmatch(line); match != nil {
+			state.ID = match[1]
+		}
+
+		if match := reGroupValue.FindStringSubmatch(line); match != nil {
+			state.group = match[1]
+		}
+
 	case !strings.HasPrefix(line, "#"):
 		if state.tagInf {
-			err := p.Append(line, state.duration, state.title, state.logo)
+			err := p.Append(line, state.duration, state.title, state.logo, state.ID, state.group)
 			if err == ErrPlaylistFull {
 				// Extend playlist by doubling size, reset internal state, try again.
 				// If the second Append fails, the if err block will handle it.
@@ -512,7 +524,7 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 				p.Segments = append(p.Segments, make([]*MediaSegment, p.Count())...)
 				p.capacity = uint(len(p.Segments))
 				p.tail = p.count
-				err = p.Append(line, state.duration, state.title, state.logo)
+				err = p.Append(line, state.duration, state.title, state.logo, state.ID, state.group)
 			}
 			// Check err for first or subsequent Append()
 			if err != nil {
