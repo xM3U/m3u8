@@ -24,10 +24,12 @@ import (
 
 var reKeyValue = regexp.MustCompile(`([a-zA-Z0-9_-]+)=("[^"]+"|[^",]+)`)
 
+var reLogoValue = regexp.MustCompile(`tvg-logo="(.+?)"`)
+
 // TimeParse allows globally apply and/or override Time Parser function.
 // Available variants:
-//		* FullTimeParse - implements full featured ISO/IEC 8601:2004
-//		* StrictTimeParse - implements only RFC3339 Nanoseconds format
+//   - FullTimeParse - implements full featured ISO/IEC 8601:2004
+//   - StrictTimeParse - implements only RFC3339 Nanoseconds format
 var TimeParse func(value string) (time.Time, error) = FullTimeParse
 
 // Decode parses a master playlist passed from the buffer. If `strict`
@@ -482,7 +484,11 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 			}
 			sepIndex = len(line)
 		}
+		spaceIndex := strings.Index(line, " ")
 		duration := line[8:sepIndex]
+		if spaceIndex != -1 && spaceIndex < sepIndex {
+			duration = line[8:spaceIndex]
+		}
 		if len(duration) > 0 {
 			if state.duration, err = strconv.ParseFloat(duration, 64); strict && err != nil {
 				return fmt.Errorf("Duration parsing error: %s", err)
@@ -491,9 +497,13 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 		if len(line) > sepIndex {
 			state.title = line[sepIndex+1:]
 		}
+		if match := reLogoValue.FindStringSubmatch(line); match != nil {
+			state.logo = match[1]
+		}
+
 	case !strings.HasPrefix(line, "#"):
 		if state.tagInf {
-			err := p.Append(line, state.duration, state.title)
+			err := p.Append(line, state.duration, state.title, state.logo)
 			if err == ErrPlaylistFull {
 				// Extend playlist by doubling size, reset internal state, try again.
 				// If the second Append fails, the if err block will handle it.
@@ -502,7 +512,7 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 				p.Segments = append(p.Segments, make([]*MediaSegment, p.Count())...)
 				p.capacity = uint(len(p.Segments))
 				p.tail = p.count
-				err = p.Append(line, state.duration, state.title)
+				err = p.Append(line, state.duration, state.title, state.logo)
 			}
 			// Check err for first or subsequent Append()
 			if err != nil {

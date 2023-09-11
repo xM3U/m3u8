@@ -85,26 +85,26 @@ const (
 //
 // Simple Media Playlist file sample:
 //
-//    #EXTM3U
-//    #EXT-X-VERSION:3
-//    #EXT-X-TARGETDURATION:5220
-//    #EXTINF:5219.2,
-//    http://media.example.com/entire.ts
-//    #EXT-X-ENDLIST
+//	#EXTM3U
+//	#EXT-X-VERSION:3
+//	#EXT-X-TARGETDURATION:5220
+//	#EXTINF:5219.2,
+//	http://media.example.com/entire.ts
+//	#EXT-X-ENDLIST
 //
 // Sample of Sliding Window Media Playlist, using HTTPS:
 //
-//    #EXTM3U
-//    #EXT-X-VERSION:3
-//    #EXT-X-TARGETDURATION:8
-//    #EXT-X-MEDIA-SEQUENCE:2680
+//	#EXTM3U
+//	#EXT-X-VERSION:3
+//	#EXT-X-TARGETDURATION:8
+//	#EXT-X-MEDIA-SEQUENCE:2680
 //
-//    #EXTINF:7.975,
-//    https://priv.example.com/fileSequence2680.ts
-//    #EXTINF:7.941,
-//    https://priv.example.com/fileSequence2681.ts
-//    #EXTINF:7.975,
-//    https://priv.example.com/fileSequence2682.ts
+//	#EXTINF:7.975,
+//	https://priv.example.com/fileSequence2680.ts
+//	#EXTINF:7.941,
+//	https://priv.example.com/fileSequence2681.ts
+//	#EXTINF:7.975,
+//	https://priv.example.com/fileSequence2682.ts
 type MediaPlaylist struct {
 	TargetDuration   float64
 	SeqNo            uint64 // EXT-X-MEDIA-SEQUENCE
@@ -136,15 +136,15 @@ type MediaPlaylist struct {
 // combines media playlists for multiple bitrates. URI lines in the
 // playlist identify media playlists. Sample of Master Playlist file:
 //
-//    #EXTM3U
-//    #EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1280000
-//    http://example.com/low.m3u8
-//    #EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=2560000
-//    http://example.com/mid.m3u8
-//    #EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=7680000
-//    http://example.com/hi.m3u8
-//    #EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=65000,CODECS="mp4a.40.5"
-//    http://example.com/audio-only.m3u8
+//	#EXTM3U
+//	#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1280000
+//	http://example.com/low.m3u8
+//	#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=2560000
+//	http://example.com/mid.m3u8
+//	#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=7680000
+//	http://example.com/hi.m3u8
+//	#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=65000,CODECS="mp4a.40.5"
+//	http://example.com/audio-only.m3u8
 type MasterPlaylist struct {
 	Variants            []*Variant
 	Args                string // optional arguments placed after URI (URI?Args)
@@ -214,6 +214,7 @@ type MediaSegment struct {
 	Discontinuity   bool      // EXT-X-DISCONTINUITY indicates an encoding discontinuity between the media segment that follows it and the one that preceded it (i.e. file format, number and type of tracks, encoding parameters, encoding sequence, timestamp sequence)
 	SCTE            *SCTE     // SCTE-35 used for Ad signaling in HLS
 	ProgramDateTime time.Time // EXT-X-PROGRAM-DATE-TIME tag associates the first sample of a media segment with an absolute date and/or time
+	Logo            string
 	Custom          map[string]CustomTag
 }
 
@@ -331,5 +332,6 @@ type decodingState struct {
 	xkey               *Key
 	xmap               *Map
 	scte               *SCTE
+	logo               string
 	custom             map[string]CustomTag
 }

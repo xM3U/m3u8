@@ -48,7 +48,7 @@ func TestLastSegmentMediaPlaylist(t *testing.T) {
 		t.Errorf("last is %v, expected: 4", p.last())
 	}
 	for i := uint(0); i < 5; i++ {
-		_ = p.Append("uri.ts", 4, "")
+		_ = p.Append("uri.ts", 4, "", "")
 		if p.last() != i {
 			t.Errorf("last is: %v, expected: %v", p.last(), i)
 		}
@@ -62,7 +62,7 @@ func TestAddSegmentToMediaPlaylist(t *testing.T) {
 	if e != nil {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
-	e = p.Append("test01.ts", 10.0, "title")
+	e = p.Append("test01.ts", 10.0, "title", "")
 	if e != nil {
 		t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 	}
@@ -115,16 +115,16 @@ func TestDiscontinuityForMediaPlaylist(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	p.Close()
-	if e = p.Append("test01.ts", 5.0, ""); e != nil {
+	if e = p.Append("test01.ts", 5.0, "", ""); e != nil {
 		t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 	}
-	if e = p.Append("test02.ts", 6.0, ""); e != nil {
+	if e = p.Append("test02.ts", 6.0, "", ""); e != nil {
 		t.Errorf("Add 2nd segment to a media playlist failed: %s", e)
 	}
 	if e = p.SetDiscontinuity(); e != nil {
 		t.Error("Can't set discontinuity tag")
 	}
-	if e = p.Append("test03.ts", 6.0, ""); e != nil {
+	if e = p.Append("test03.ts", 6.0, "", ""); e != nil {
 		t.Errorf("Add 3nd segment to a media playlist failed: %s", e)
 	}
 	// fmt.Println(p.Encode().String())
@@ -141,10 +141,10 @@ func TestProgramDateTimeForMediaPlaylist(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	p.Close()
-	if e = p.Append("test01.ts", 5.0, ""); e != nil {
+	if e = p.Append("test01.ts", 5.0, "", ""); e != nil {
 		t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 	}
-	if e = p.Append("test02.ts", 6.0, ""); e != nil {
+	if e = p.Append("test02.ts", 6.0, "", ""); e != nil {
 		t.Errorf("Add 2nd segment to a media playlist failed: %s", e)
 	}
 	loc, _ := time.LoadLocation("Europe/Moscow")
@@ -154,7 +154,7 @@ func TestProgramDateTimeForMediaPlaylist(t *testing.T) {
 	if e = p.SetDiscontinuity(); e != nil {
 		t.Error("Can't set discontinuity tag")
 	}
-	if e = p.Append("test03.ts", 6.0, ""); e != nil {
+	if e = p.Append("test03.ts", 6.0, "", ""); e != nil {
 		t.Errorf("Add 3nd segment to a media playlist failed: %s", e)
 	}
 	// fmt.Println(p.Encode().String())
@@ -168,11 +168,11 @@ func TestTargetDurationForMediaPlaylist(t *testing.T) {
 	if e != nil {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
-	e = p.Append("test01.ts", 9.0, "")
+	e = p.Append("test01.ts", 9.0, "", "")
 	if e != nil {
 		t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 	}
-	e = p.Append("test02.ts", 9.1, "")
+	e = p.Append("test02.ts", 9.1, "", "")
 	if e != nil {
 		t.Errorf("Add 2nd segment to a media playlist failed: %s", e)
 	}
@@ -189,7 +189,7 @@ func TestOverAddSegmentsToMediaPlaylist(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 11; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Logf("As expected new segment #%d not assigned to a media playlist: %s due oversize\n", i, e)
 		}
@@ -202,7 +202,7 @@ func TestSetSCTE35(t *testing.T) {
 	if err := p.SetSCTE35(scte); err == nil {
 		t.Error("SetSCTE35 expected empty playlist error")
 	}
-	_ = p.Append("test01.ts", 10.0, "title")
+	_ = p.Append("test01.ts", 10.0, "title", "")
 	if err := p.SetSCTE35(scte); err != nil {
 		t.Errorf("SetSCTE35 did not expect error: %v", err)
 	}
@@ -233,7 +233,7 @@ func TestSetSCTEForMediaPlaylist(t *testing.T) {
 		if e != nil {
 			t.Fatalf("Create media playlist failed: %s", e)
 		}
-		if e = p.Append("test01.ts", 5.0, ""); e != nil {
+		if e = p.Append("test01.ts", 5.0, "", ""); e != nil {
 			t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 		}
 		if e := p.SetSCTE(test.Cue, test.ID, test.Time); e != nil {
@@ -265,7 +265,7 @@ func TestSetKeyForMediaPlaylist(t *testing.T) {
 		if e != nil {
 			t.Fatalf("Create media playlist failed: %s", e)
 		}
-		if e = p.Append("test01.ts", 5.0, ""); e != nil {
+		if e = p.Append("test01.ts", 5.0, "", ""); e != nil {
 			t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 		}
 		if e := p.SetKey("AES-128", "https://example.com", "iv", test.KeyFormat, test.KeyFormatVersions); e != nil {
@@ -329,7 +329,7 @@ func TestSetMapForMediaPlaylist(t *testing.T) {
 	if e != nil {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
-	e = p.Append("test01.ts", 5.0, "")
+	e = p.Append("test01.ts", 5.0, "", "")
 	if e != nil {
 		t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 	}
@@ -357,7 +357,7 @@ func TestEncodeMediaPlaylistWithDefaultMap(t *testing.T) {
 	}
 	p.SetDefaultMap("https://example.com", 1000*1024, 1024*1024)
 
-	e = p.Append("test01.ts", 5.0, "")
+	e = p.Append("test01.ts", 5.0, "", "")
 	if e != nil {
 		t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 	}
@@ -399,7 +399,7 @@ func TestEncodeMediaPlaylistWithCustomTags(t *testing.T) {
 	}
 	p.SetCustomTag(customEmptyPTag)
 
-	e = p.Append("test01.ts", 5.0, "")
+	e = p.Append("test01.ts", 5.0, "", "")
 	if e != nil {
 		t.Fatalf("Add 1st segment to a media playlist failed: %s", e)
 	}
@@ -445,7 +445,7 @@ func TestEncodeMediaPlaylist(t *testing.T) {
 	if e != nil {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
-	e = p.Append("test01.ts", 5.0, "")
+	e = p.Append("test01.ts", 5.0, "", "")
 	if e != nil {
 		t.Errorf("Add 1st segment to a media playlist failed: %s", e)
 	}
@@ -462,7 +462,7 @@ func TestLoopSegmentsOfMediaPlaylist(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 5; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -486,7 +486,7 @@ func TestEncryptionKeysInMediaPlaylist(t *testing.T) {
 			Keyformat:         "identity",
 			Keyformatversions: "1",
 		}
-		_ = p.Append(uri+".ts", 4, "")
+		_ = p.Append(uri+".ts", 4, "", "")
 		_ = p.SetKey(expected.Method, expected.URI, expected.IV, expected.Keyformat, expected.Keyformatversions)
 
 		if p.Segments[i].Key == nil {
@@ -503,9 +503,9 @@ func TestEncryptionKeyMethodNoneInMediaPlaylist(t *testing.T) {
 	if e != nil {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
-	p.Append("segment-1.ts", 4, "")
+	p.Append("segment-1.ts", 4, "", "")
 	p.SetKey("AES-128", "key-uri", "iv", "identity", "1")
-	p.Append("segment-2.ts", 4, "")
+	p.Append("segment-2.ts", 4, "", "")
 	p.SetKey("NONE", "", "", "", "")
 	expected := `#EXT-X-KEY:METHOD=NONE
 #EXTINF:4.000,
@@ -524,7 +524,7 @@ func TestMediaPlaylistWithIntegerDurations(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 9; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.6, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.6, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -543,7 +543,7 @@ func TestMediaPlaylistWithEmptyMedia(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 1; i < 10; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.6, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.6, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -574,7 +574,7 @@ func TestClosedMediaPlaylist(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 10; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Errorf("Due oversize new segment #%d not assigned to a media playlist: %s\n", i, e)
 		}
@@ -694,10 +694,10 @@ func TestMediaPlaylist_Slide(t *testing.T) {
 		t.Fatalf("Failed to create media playlist: %v", e)
 	}
 
-	_ = m.Append("t00.ts", 10, "")
-	_ = m.Append("t01.ts", 10, "")
-	_ = m.Append("t02.ts", 10, "")
-	_ = m.Append("t03.ts", 10, "")
+	_ = m.Append("t00.ts", 10, "", "")
+	_ = m.Append("t01.ts", 10, "", "")
+	_ = m.Append("t02.ts", 10, "", "")
+	_ = m.Append("t03.ts", 10, "", "")
 	if m.Count() != 4 {
 		t.Fatalf("Excepted segments in media playlist: 4, got: %v", m.Count())
 	}
@@ -757,7 +757,7 @@ func TestNewMasterPlaylist(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 5; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -784,7 +784,7 @@ func TestNewMasterPlaylistWithAlternatives(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 5; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -842,7 +842,7 @@ func TestNewMasterPlaylistWithParams(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 5; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -860,7 +860,7 @@ func TestEncodeMasterPlaylistWithExistingQuery(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 5; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -882,7 +882,7 @@ func TestEncodeMasterPlaylist(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 5; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -899,7 +899,7 @@ func TestEncodeMasterPlaylistWithStreamInfName(t *testing.T) {
 		t.Fatalf("Create media playlist failed: %s", e)
 	}
 	for i := 0; i < 5; i++ {
-		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		e = p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 		if e != nil {
 			t.Errorf("Add segment #%d to a media playlist failed: %s", i, e)
 		}
@@ -956,8 +956,8 @@ func TestMasterSetVersion(t *testing.T) {
 // Print it
 func ExampleMediaPlaylist_String() {
 	p, _ := NewMediaPlaylist(1, 2)
-	p.Append("test01.ts", 5.0, "")
-	p.Append("test02.ts", 6.0, "")
+	p.Append("test01.ts", 5.0, "", "")
+	p.Append("test02.ts", 6.0, "", "")
 	fmt.Printf("%s\n", p)
 	// Output:
 	// #EXTM3U
@@ -973,8 +973,8 @@ func ExampleMediaPlaylist_String() {
 // Print it
 func ExampleMediaPlaylist_String_Winsize0() {
 	p, _ := NewMediaPlaylist(0, 2)
-	p.Append("test01.ts", 5.0, "")
-	p.Append("test02.ts", 6.0, "")
+	p.Append("test01.ts", 5.0, "", "")
+	p.Append("test02.ts", 6.0, "", "")
 	fmt.Printf("%s\n", p)
 	// Output:
 	// #EXTM3U
@@ -992,8 +992,8 @@ func ExampleMediaPlaylist_String_Winsize0() {
 // Print it
 func ExampleMediaPlaylist_String_Winsize0_VOD() {
 	p, _ := NewMediaPlaylist(0, 2)
-	p.Append("test01.ts", 5.0, "")
-	p.Append("test02.ts", 6.0, "")
+	p.Append("test01.ts", 5.0, "", "")
+	p.Append("test02.ts", 6.0, "", "")
 	p.Close()
 	fmt.Printf("%s\n", p)
 	// Output:
@@ -1015,7 +1015,7 @@ func ExampleMasterPlaylist_String() {
 	m := NewMasterPlaylist()
 	p, _ := NewMediaPlaylist(3, 5)
 	for i := 0; i < 5; i++ {
-		p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "")
+		p.Append(fmt.Sprintf("test%d.ts", i), 5.0, "", "")
 	}
 	m.Append("chunklist1.m3u8", p, VariantParams{ProgramId: 123, Bandwidth: 1500000, AverageBandwidth: 1500000, Resolution: "576x480", FrameRate: 25.000})
 	m.Append("chunklist2.m3u8", p, VariantParams{ProgramId: 123, Bandwidth: 1500000, AverageBandwidth: 1500000, Resolution: "576x480", FrameRate: 25.000})
@@ -1091,24 +1091,24 @@ func ExampleMediaPlaylist_Segments_scte35_67_2014() {
 // cases.
 func ExampleMediaPlaylistGetAllSegments() {
 	m, _ := NewMediaPlaylist(3, 3)
-	_ = m.Append("t00.ts", 10, "")
-	_ = m.Append("t01.ts", 10, "")
-	_ = m.Append("t02.ts", 10, "")
+	_ = m.Append("t00.ts", 10, "", "")
+	_ = m.Append("t01.ts", 10, "", "")
+	_ = m.Append("t02.ts", 10, "", "")
 	for _, v := range m.GetAllSegments() {
 		fmt.Printf("%s\n", v.URI)
 	}
 	m.Remove()
 	m.Remove()
 	m.Remove()
-	_ = m.Append("t03.ts", 10, "")
-	_ = m.Append("t04.ts", 10, "")
+	_ = m.Append("t03.ts", 10, "", "")
+	_ = m.Append("t04.ts", 10, "", "")
 	for _, v := range m.GetAllSegments() {
 		fmt.Printf("%s\n", v.URI)
 	}
 	m.Remove()
 	m.Remove()
-	_ = m.Append("t05.ts", 10, "")
-	_ = m.Append("t06.ts", 10, "")
+	_ = m.Append("t05.ts", 10, "", "")
+	_ = m.Append("t06.ts", 10, "", "")
 	m.Remove()
 	m.Remove()
 	// empty because removed two elements
